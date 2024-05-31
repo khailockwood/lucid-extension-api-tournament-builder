@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bracket Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        #root {
+            background-color: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover, button.selected {
+            background-color: #0056b3;
+        }
+        div.input-container {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        label {
+            margin-right: 10px;
+            width: 50px;
+            text-align: right;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .bottom-buttons {
+            margin-top: auto;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .cancel-button {
+            background-color: white;
+            color: #007BFF;
+            border: 2px solid #007BFF;
+        }
+        .cancel-button:hover {
+            background-color: #e6f0ff;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <!-- Load React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Load Babel Compiler -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        function BracketInput() {
+            const [teamCount, setTeamCount] = React.useState(0);
+            const [selectedNum, setSelectedNum] = React.useState(null);
+            const [teamInputs, setTeamInputs] = React.useState({});
+
+            const handleButtonClick = (num) => {
+                setTeamCount(num);
+                setSelectedNum(num);
+                setTeamInputs({});
+            };
+            const handleInputChange = (index, value) => {
+                setTeamInputs(prev => ({ ...prev, [index]: value }));
+            };
+
+            const createBracketArray = () => {
+                const teamsArray = [];
+                for (let i = 1; i <= teamCount; i++) {
+                    teamsArray.push(`${i}`);
+                    teamsArray.push(teamInputs[i] || `Team Name ${i}`);
+                }
+                //console.log(teamsArray);
+                return (teamsArray);;
+            };
+
+            const renderInputs = () => {
+                let inputs = [];
+                for (let i = 1; i <= teamCount; i++) {
+                    inputs.push(
+                        <div className="input-container" key={i}>
+                            <label>{`${i}.`}</label>
+                            <input
+                                type="text"
+                                placeholder={`Team Name ${i}`}
+                                value={teamInputs[i] || ''}
+                                onChange={e => handleInputChange(i, e.target.value)}
+                            />
+                        </div>
+                    );
+                }
+                return inputs;;
+            };
+            function createBracketMessage () {
+                const messageArray = createBracketArray();
+                parent.postMessage({
+                    messageArray: messageArray
+            }, '*');
+            }
+            function cancelMessage () {
+                parent.postMessage({
+                    cancel: 'cancel',
+            }, '*');
+            }
+
+            return (
+                <div>
+                    <h1>Input Custom Bracket:</h1>
+                    <div>
+                        {[2, 4, 8, 16, 32, 64].map(num => (
+                            <button
+                                key={num}
+                                onClick={() => handleButtonClick(num)}
+                                className={selectedNum === num ? 'selected' : ''}
+                            >
+                                {`${num} Teams`}
+                            </button>
+                        ))}
+                    </div>
+                    <div>
+                        {renderInputs()}
+                    </div>
+                    {selectedNum && (
+                    <div className="bottom-buttons">
+                        <button className="cancel-button" onClick={cancelMessage}>Cancel</button>
+                        <button onClick= {createBracketMessage}>Create</button>
+                    </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<BracketInput />);
+    </script>
+</body>
+</html>

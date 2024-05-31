@@ -1,0 +1,17 @@
+{
+    "name": "Test Library",
+    "shapes": [
+        {
+            "shape": "first",
+            "name": "Test Shape",
+            "defaults": {
+                "fillColor": "#ff0000",
+                "strokeColor": "#00ffff",
+                "strokeWidth": 3,
+                "rounding": 0,
+                "width": 300,
+                "height": 80
+            }
+        }
+    ]
+}

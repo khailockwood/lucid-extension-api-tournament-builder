@@ -1,0 +1,31 @@
+{
+  "version": "1.0.8",
+  "extensions": [
+    {
+      "name": " first-test-extension",
+      "title": " first-test-extension",
+      "products": [
+        "chart",
+        "spark",
+        "teamspaces"
+      ],
+      "codePath": "editorextensions/ first-test-extension/bin/extension.js",
+      "scopes": [
+        "READ",
+        "WRITE",
+        "DOWNLOAD",
+        "SHOW_MODAL",
+        "CUSTOM_UI",
+        "NETWORK"
+      ]
+    }
+  ],
+  "shapeLibraries": [
+    {
+      "name": "test",
+      "product": "chart",
+      "lcszPath": "shapelibraries/test.lcsz"
+    }
+  ],
+  "oauthProviders": []
+}
