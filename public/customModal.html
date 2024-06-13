@@ -95,7 +95,7 @@
             const createBracketArray = () => {
                 const teamsArray = [];
                 for (let i = 1; i <= teamCount; i++) {
-                    teamsArray.push(`${i}`);
+                    teamsArray.push(`${i}`); // push seed and name at once (tuple or object)
                     teamsArray.push(teamInputs[i] || `Team Name ${i}`);
                 }
                 //console.log(teamsArray);

@@ -1,6 +1,9 @@
 {
   "properties": [
     { "name": "teamName", "label": "teamName", type: "string", "default": "Team" }
+    { "name": "isWinner", "label": "isWinner", type: "boolean", "default": "false" }
+    { "name": "winnerColor", "label": "winnerColor", type: "color", "default": "#d4af37" }
+    { "name": "loserColor", "label": "loserColor", type: "color", "default": "#d3d3d3" }
   ],
   "style": {
     "fill": { "type": "color", "color": "#ffffff" },
