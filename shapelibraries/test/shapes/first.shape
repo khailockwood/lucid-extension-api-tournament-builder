@@ -2,12 +2,12 @@
   "properties": [
     { "name": "teamName", "label": "teamName", type: "string", "default": "Team" }
     { "name": "isWinner", "label": "isWinner", type: "boolean", "default": "false" }
-    { "name": "winnerColor", "label": "winnerColor", type: "color", "default": "#d4af37" }
-    { "name": "loserColor", "label": "loserColor", type: "color", "default": "#d3d3d3" }
+    { "name": "winnerColor", "label": "winnerColor", type: "color", "default": "#FFD700" }
+    { "name": "loserColor", "label": "loserColor", type: "color", "default": "#000000" }  
   ],
   "style": {
     "fill": { "type": "color", "color": "#ffffff" },
-    "stroke": { "color": "#000000", "width": 2 },
+    "stroke": { "color": "=IF(@isWinner = true, @winnerColor, @loserColor)", "width": "=IF(@isWinner = true, 8, 2)"},
   },
   "shapes": [
     {
@@ -15,8 +15,8 @@
       "textarea": {
         "name": "t0",
         "text": "Team Name Here!",
-        "editable": true,
-        "style": { "color": "#000000" }
+        "editable": "true",
+        "style": { "color": "#000000", "bold":  "false", "underline": "false", "size": "=IF(@isWinner = true, 20, 10)"}
       }
     }
   ]

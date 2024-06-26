@@ -302,7 +302,6 @@ async function bracketRender (numSections: number, size: number, reorderedArray:
                     //customBlock.setReferenceKey("key", )
                     //customBlock.linkText(textAreaName, " ", "teamName")
                     customBlock.shapeData.set("isWinner", false);
-
                     blockReferences.push(customBlock)
                 
                 if (i % 2 == 0) {
@@ -403,29 +402,15 @@ function organizeBlocksIntoRounds(blockReferences: BlockProxy[]): BlockProxy[][]
 }
 
 async function toggleWinnerMenu(block: ItemProxy, isWinner: SerializedFieldType | SerializedDataError) {
-    // Organize the blocks into rounds
-    //console.log(blockReferences);
-    const rounds = organizeBlocksIntoRounds(blockReferences);
-    //console.log(rounds);
-
-    // Toggle text styles for the selected block
+    block.shapeData.set("isWinner", !isWinner);
     for (const ta of block.textAreas.keys()) {
         const oldStyle = block.textStyles.get(ta);
         await block.textStyles.set(ta, {
             [TextMarkupNames.Bold]: !oldStyle[TextMarkupNames.Bold],
             [TextMarkupNames.Underline]: !oldStyle[TextMarkupNames.Underline],
-            [TextMarkupNames.Color]: "#d4af37"
         });
-        if (!isWinner) {
-            await block.textStyles.set(ta, {
-                [TextMarkupNames.Color]: "#d4af37"
-            });
-        } else {
-            await block.textStyles.set(ta, {
-                [TextMarkupNames.Color]: "#000000"
-            });
-        }
     }
+    const rounds = organizeBlocksIntoRounds(blockReferences);
 
     // Find the index of the block in blockReferences
     const currentIndex = blockReferences.findIndex(b => b.id === block.id);
@@ -452,21 +437,39 @@ async function toggleWinnerMenu(block: ItemProxy, isWinner: SerializedFieldType 
     // Determine the next round's block to update
     const nextRoundIndex = Math.floor((positionInRound / 2));
     const nextBlock = rounds[roundIndex + 1][nextRoundIndex];
-    console.log(rounds);
+   /* console.log(rounds);
     console.log(nextBlock.id);
     console.log("round index: " + roundIndex)
     console.log("next round index: " + nextRoundIndex)
-
+ */
 
     // Push the winner's name to the correct spot in the next round
-    if (nextBlock) {
-        for (const ta of nextBlock.textAreas.keys()) {
-            nextBlock.shapeData.set("teamName", winnerName);
-            const textAreaName = nextBlock.textAreas.keys()[0];
-            nextBlock.textAreas.set(textAreaName, winnerName);
+    if(block.shapeData.get("isWinner") == true) {
+        if (nextBlock) {
+            for (const ta of nextBlock.textAreas.keys()) {
+                nextBlock.shapeData.set("teamName", winnerName);
+                const textAreaName = nextBlock.textAreas.keys()[0];
+                nextBlock.textAreas.set(textAreaName, winnerName);
         }
     }
-}
+    } else {
+        for (let i = Math.floor((blockReferences.length)/2); i < blockReferences.length; i++){
+        if (blockReferences[i].shapeData.get("teamName") == winnerName) {
+            if (nextBlock) {
+                blockReferences[i].shapeData.set("teamName", "TBD");
+                    const textAreaName = blockReferences[i].textAreas.keys()[0];
+                    blockReferences[i].textAreas.set(textAreaName, "TBD");
+                    await blockReferences[i].textStyles.set(textAreaName, {
+                        [TextMarkupNames.Bold]: false,
+                        [TextMarkupNames.Underline]: false,
+                    });
+            } 
+            blockReferences[i].shapeData.set("isWinner", false);;
+        } 
+        }
+        console.log(blockReferences.length);
+    }       
+    }
 
     client.registerAction('custom-bracket', async () => {
         ShowCustomBracketModal();
@@ -486,11 +489,8 @@ async function toggleWinnerMenu(block: ItemProxy, isWinner: SerializedFieldType 
     client.registerAction('set-winner', () => {
         const selection = viewport.getSelectedItems()
         const useSelection = selection[0];
-        const isWinner = useSelection.shapeData.get('isWinner');
-        useSelection.shapeData.set("isWinner", !isWinner);
+        const isWinner = useSelection.shapeData.get("isWinner");
         toggleWinnerMenu(useSelection, isWinner);
-        // console.log (blockReferences);
-        // console.log (useSelection);
     });
    
     async function init() {
